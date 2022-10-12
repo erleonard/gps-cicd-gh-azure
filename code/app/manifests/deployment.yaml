@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weatherapi
+  labels:
+    app: weatherapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weatherapi
+  template:
+    metadata:
+      labels:
+        app: weatherapi
+    spec:
+      containers:
+        - name: weatherapi
+          image: wthregistry.azurecr.io/weatherapi:20221012
+          ports:
+            - containerPort: 5000
