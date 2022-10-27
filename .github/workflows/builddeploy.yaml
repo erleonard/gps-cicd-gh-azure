@@ -1,8 +1,8 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
-    branches: [ "main" ]
+  #push:
+  #  branches: [ "main" ]
   workflow_dispatch:
   
 env:
@@ -114,3 +114,6 @@ jobs:
           ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
         imagepullsecrets: |
           ${{ env.IMAGE_PULL_SECRET_NAME }}
+  
+  Security:
+    uses: erleonard/gps-cicd-gh-azure/.github/workflows/msdevopssec.yml@main
