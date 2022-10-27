@@ -1,13 +1,10 @@
 name: MSDO windows-latest
+
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  sample:
+  security-scan:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
