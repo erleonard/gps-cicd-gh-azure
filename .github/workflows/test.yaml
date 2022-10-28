@@ -31,4 +31,4 @@ jobs:
       - name: test
         run: |
           REPO_NAME=${{ github.event.repository.name }}
-          echo $REPO_NAM
+          echo $REPO_NAME
