@@ -5,10 +5,10 @@ name: Test
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # push:
+  #  branches: [ "main" ]
+  # pull_request:
+  #  branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,4 +29,6 @@ jobs:
       - name: Run a one-line script
         run: echo $GITHUB_REF_NAME
       - name: test
-        run: echo "REPO_NAME=${{ github.event.repository.name }}"
+        run: |
+          REPO_NAME=${{ github.event.repository.name }}
+          echo $REPO_NAM
