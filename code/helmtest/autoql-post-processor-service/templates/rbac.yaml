@@ -1,0 +1,31 @@
+{{- if .Values.rbac.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "autoql-post-processor-service.name" . }}
+  namespace: {{ .Values.namespace }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "autoql-post-processor-service.name" . }}
+  namespace: {{ .Values.namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "watch", "update", "create", "list", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-endpoints
+  namespace: {{ .Values.namespace }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "autoql-post-processor-service.name" . }}
+  namespace: {{ .Values.namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "autoql-post-processor-service.name" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

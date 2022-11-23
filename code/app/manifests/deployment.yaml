@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: weatherapi
-          image: wthregistry.azurecr.io/weatherapi:20221012
+          image: gpshackacr.azurecr.io/weatherapi:d577d33fe949221fccb0b2b0374b5689e1e8b602
           ports:
             - containerPort: 5000

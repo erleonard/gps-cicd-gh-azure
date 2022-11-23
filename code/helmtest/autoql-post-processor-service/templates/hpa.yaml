@@ -1,0 +1,16 @@
+{{- $fullName := include "autoql-post-processor-service.fullname" . -}}
+{{- if .Values.hpa.enabled }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  scaleTargetRef:
+      apiVersion: extensions/v1
+      kind: Deployment
+      name: {{ $fullName }}
+{{- with .Values.hpa.spec }}
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- end }}

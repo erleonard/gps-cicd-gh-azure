@@ -1,0 +1,101 @@
+{{ $global := . }}
+{{- $fullName := include "autoql-post-processor-service.fullname" . -}}
+{{- $releaseName := .Release.Name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ $fullName }}
+  labels:
+    releaseId: {{ .Values.releaseId }}
+    app: {{ .Values.app }}
+    chart: {{ template "autoql-post-processor-service.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  {{- if eq (.Values.replicaCount | int) 1 }}
+  # if the replica count is 1 deploy first then remove
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app }}
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ template "autoql-post-processor-service.name" . }}
+      {{- end }}
+      {{- if .Values.image.imagePullSecrets }}
+      {{ with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+      {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.app }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{ with .Values.ports }}
+          ports:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{ with .Values.livenessProbe }}
+          livenessProbe:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{ with .Values.readinessProbe }}
+          readinessProbe:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          env:
+            {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: appconfig-{{ $releaseName }}
+                  key: {{ $key }}
+            {{- end }}
+            {{- if .Values.isJava }}
+            - name: KUBERNETES_MEMORY_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: {{ .Values.app }}
+                  resource: limits.memory
+            {{- end }}
+          {{ with .Values.volumeMounts }}
+          volumeMounts:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+      {{ with .Values.sidecars }}
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{ with .Values.initContainers }}
+      initContainers:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+      {{- end }}

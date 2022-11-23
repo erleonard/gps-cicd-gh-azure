@@ -1,0 +1,26 @@
+{{ $global := . }}
+# define the application configmap
+{{- if .Values.env}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appconfig-{{ .Release.Name }}
+  namespace: {{ $global.Values.namespace }}
+data:
+{{- range $key, $val := .Values.env }}
+  {{ $key }}: {{ $val | quote }}
+{{- end }}
+---
+{{- end }}
+{{- range $index, $configMap := .Values.configMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $configMap.name }}-{{ $global.Chart.Name }}
+  namespace: {{ $global.Values.namespace }}
+{{- with $configMap.values }}
+data:
+{{ toYaml . | indent 2}}
+{{- end }}
+---
+{{- end }}

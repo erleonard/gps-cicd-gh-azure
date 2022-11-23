@@ -1,0 +1,22 @@
+{{- $fullName := include "autoql-post-processor-service.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ $fullName }}
+  labels:
+    releaseid: {{ .Values.releaseId }}
+    app: {{ .Values.app }}
+    chart: {{ template "autoql-post-processor-service.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ default 80 .Values.service.port }}
+      targetPort: {{ default 8080 .Values.service.targetPort }}
+      protocol: {{ default "TCP" .Values.service.protocol}}
+      name: {{ .Values.service.portName }}
+  selector:
+    app: {{ .Values.app }}
+    release: {{ .Release.Name }}

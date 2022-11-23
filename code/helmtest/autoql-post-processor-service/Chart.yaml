@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: "1.0"
+description: Python 3 service for handling the query autoql-post-processor-service
+  and suggestion system.
+home: https://github.com/chatatechnologies/chart-autoql-post-processor-service
+name: autoql-post-processor-service
+sources:
+- https://github.com/chatatechnologies/autoql-post-processor-service
+version: 0.0.1
